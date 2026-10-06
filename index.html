@@ -130,7 +130,7 @@
           <div class="result-label">Preço equivalente por 1 Quilograma:</div>
           <div class="result-value">{{ currentResult.formattedPricePerKg }} <span style="font-size: 0.95rem; color: #94a3b8;">/ kg</span></div>
           <div class="result-detail">
-            Grupo: <strong>{{ currentResult.group }}</strong> &bull; {{ currentResult.name }} ({{ currentResult.grams }}g por {{ currentResult.formattedPrice }})
+            <strong>{{ currentResult.group }}</strong> &bull; {{ currentResult.name }} &bull; Pago: {{ currentResult.formattedPrice }}
           </div>
           
           <button type="button" @click="saveCurrentResult" class="btn-save">

@@ -55,7 +55,15 @@ const app = createApp({
           : Number(this.productPrice);
 
         const group = this.groupName.trim() || 'Geral';
-        const name = this.productName.trim() || `Item ${this.savedItems.length + 1}`;
+        
+        // Conta quantos itens já existem neste grupo para gerar numeração sequencial
+        const groupItemsCount = this.savedItems.filter(
+          item => (item.group || 'Geral').trim().toLowerCase() === group.toLowerCase()
+        ).length;
+        const nextIndex = groupItemsCount + 1;
+        
+        // Se não houver nome, usa 'Item X (xxxg)'
+        const name = this.productName.trim() || `Item ${nextIndex} (${this.weightGrams}g)`;
 
         this.currentResult = {
           group,
