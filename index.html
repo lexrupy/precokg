@@ -70,46 +70,48 @@
             </div>
           </div>
 
-          <!-- Campo: Peso em Gramas -->
-          <div class="form-group">
-            <label for="weightGrams">Peso (em Gramas) *</label>
-            <input 
-              id="weightGrams" 
-              type="number" 
-              class="input-large" 
-              v-model="weightGrams" 
-              placeholder="Ex: 500" 
-              inputmode="numeric" 
-              min="1" 
-              step="1"
-              required
-            >
-            <!-- Atalhos de Peso Frequentes -->
-            <div class="presets-container">
-              <span class="preset-chip" @click="setPreset(15)">15g</span>
-              <span class="preset-chip" @click="setPreset(30)">30g</span>
-              <span class="preset-chip" @click="setPreset(60)">60g</span>
-              <span class="preset-chip" @click="setPreset(100)">100g</span>
-              <span class="preset-chip" @click="setPreset(200)">200g</span>
-              <span class="preset-chip" @click="setPreset(250)">250g</span>
-              <span class="preset-chip" @click="setPreset(400)">400g</span>
-              <span class="preset-chip" @click="setPreset(500)">500g</span>
-              <span class="preset-chip" @click="setPreset(1000)">1000g (1kg)</span>
+          <!-- Linha com Peso e Preço lado a lado -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="weightGrams">Peso (g) *</label>
+              <input 
+                id="weightGrams" 
+                type="number" 
+                class="input-large" 
+                v-model="weightGrams" 
+                placeholder="Ex: 500" 
+                inputmode="numeric" 
+                min="1" 
+                step="1"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="productPrice">Preço *</label>
+              <input 
+                id="productPrice" 
+                type="text" 
+                class="input-large" 
+                v-model="productPrice" 
+                placeholder="Ex: 14,90" 
+                inputmode="decimal" 
+                required
+              >
             </div>
           </div>
 
-          <!-- Campo: Preço Total Pago -->
-          <div class="form-group">
-            <label for="productPrice">Preço na Prateleira (R$) *</label>
-            <input 
-              id="productPrice" 
-              type="text" 
-              class="input-large" 
-              v-model="productPrice" 
-              placeholder="Ex: 14,90" 
-              inputmode="decimal" 
-              required
-            >
+          <!-- Atalhos de Peso Frequentes -->
+          <div class="presets-container">
+            <span class="preset-chip" @click="setPreset(15)">15g</span>
+            <span class="preset-chip" @click="setPreset(30)">30g</span>
+            <span class="preset-chip" @click="setPreset(60)">60g</span>
+            <span class="preset-chip" @click="setPreset(100)">100g</span>
+            <span class="preset-chip" @click="setPreset(200)">200g</span>
+            <span class="preset-chip" @click="setPreset(250)">250g</span>
+            <span class="preset-chip" @click="setPreset(400)">400g</span>
+            <span class="preset-chip" @click="setPreset(500)">500g</span>
+            <span class="preset-chip" @click="setPreset(1000)">1kg</span>
           </div>
 
           <!-- Mensagem de Erro -->
