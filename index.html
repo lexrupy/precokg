@@ -41,35 +41,33 @@
         </h2>
 
         <form @submit.prevent="handleCalculate">
-          <!-- Campo: Grupo / Categoria (Mantido entre cálculos) -->
-          <div class="form-group">
-            <label for="groupName">
-              <span>Grupo / Produto</span>
-              <span class="label-hint">Mantido a cada cálculo</span>
-            </label>
-            <input 
-              id="groupName" 
-              type="text" 
-              class="input-large" 
-              v-model.trim="groupName" 
-              placeholder="Ex: Café, Arroz, Sabão em Pó, Banana..."
-              maxlength="40"
-              autocomplete="off"
-            >
-          </div>
+          <!-- Linha com Grupo e Marca lado a lado -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="groupName">Grupo *</label>
+              <input 
+                id="groupName" 
+                type="text" 
+                class="input-large" 
+                v-model.trim="groupName" 
+                placeholder="Ex: Café"
+                maxlength="30"
+                autocomplete="off"
+              >
+            </div>
 
-          <!-- Campo Opcional: Nome da Marca / Embalagem -->
-          <div class="form-group">
-            <label for="prodName">Marca / Embalagem (Opcional)</label>
-            <input 
-              id="prodName" 
-              type="text" 
-              class="input-large" 
-              v-model.trim="productName" 
-              placeholder="Ex: Melitta, Pilão, Pacote Econômico..."
-              maxlength="50"
-              autocomplete="off"
-            >
+            <div class="form-group">
+              <label for="prodName">Marca (Opc.)</label>
+              <input 
+                id="prodName" 
+                type="text" 
+                class="input-large" 
+                v-model.trim="productName" 
+                placeholder="Ex: Melitta"
+                maxlength="30"
+                autocomplete="off"
+              >
+            </div>
           </div>
 
           <!-- Campo: Peso em Gramas -->
@@ -121,7 +119,7 @@
 
           <!-- Botão Principal de Calcular -->
           <button type="submit" class="btn-calc">
-            <span>⚡</span> CALCULAR PREÇO POR KG
+            <span>⚡</span> CALCULAR
           </button>
         </form>
 

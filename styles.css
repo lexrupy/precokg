@@ -112,8 +112,15 @@ body {
 }
 
 /* Inputs e Formulários */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin-bottom: 0.15rem;
+}
+
 .form-group {
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.55rem;
 }
 
 .form-group label {
@@ -592,5 +599,43 @@ body {
 
   .item-price-kg {
     font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-brand h1 {
+    font-size: 1.05rem;
+  }
+
+  .input-large {
+    font-size: 0.9rem !important;
+    height: 2.5rem !important;
+    padding: 0.3rem 0.5rem !important;
+  }
+
+  .preset-chip {
+    font-size: 0.68rem;
+    padding: 0.18rem 0.42rem;
+  }
+
+  .btn-calc {
+    height: 2.65rem;
+    font-size: 0.9rem;
+  }
+
+  .form-row-2 {
+    gap: 0.35rem;
+  }
+
+  .item-card {
+    padding: 0.45rem 0.55rem;
+  }
+
+  .item-name {
+    font-size: 0.82rem;
+  }
+
+  .item-price-kg {
+    font-size: 0.92rem;
   }
 }
