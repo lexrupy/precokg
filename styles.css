@@ -1,0 +1,503 @@
+/* ==========================================================================
+   Calculadora de Preço por Kg - Tema Escuro Moderno (Mobile First)
+   Complemento de alta usabilidade sobre o Pico.css v2
+   ========================================================================== */
+
+:root {
+  --primary-color: #10b981;
+  --primary-hover: #059669;
+  --primary-glow: rgba(16, 185, 129, 0.25);
+  --cheapest-border: #10b981;
+  --cheapest-bg: rgba(16, 185, 129, 0.12);
+  --surface-dark: #1e293b;
+  --surface-card: #172033;
+  --surface-card-hover: #222e47;
+  --danger-color: #ef4444;
+  --danger-hover: #dc2626;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --badge-bg: #334155;
+}
+
+body {
+  background-color: #0b1120;
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  padding-bottom: 3rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header & Status */
+.app-header {
+  padding: 1.25rem 0.5rem 0.75rem;
+  border-bottom: 1px solid #1e293b;
+  margin-bottom: 1.25rem;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.app-brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.app-brand h1 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #f8fafc 30%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #1e293b;
+  color: #34d399;
+  border: 1px solid #334155;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-offline::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.btn-install {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+  transition: all 0.2s;
+  margin: 0;
+}
+
+.btn-install:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Container do App */
+.app-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 0.75rem;
+}
+
+/* Cards */
+.card-main {
+  background: var(--surface-card);
+  border: 1px solid #293548;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #e2e8f0;
+}
+
+/* Inputs e Formulários */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: #cbd5e1;
+}
+
+.input-large {
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  height: 3.25rem !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 0.75rem !important;
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-large:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px var(--primary-glow) !important;
+}
+
+.input-large::placeholder {
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Presets rápidos para gramas */
+.presets-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.preset-chip {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+}
+
+.preset-chip:hover, .preset-chip:active {
+  background: #334155;
+  color: #34d399;
+  border-color: #10b981;
+}
+
+/* Botões de Ação Grandes */
+.btn-calc {
+  width: 100%;
+  height: 3.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 14px var(--primary-glow);
+  transition: transform 0.1s, filter 0.2s;
+}
+
+.btn-calc:hover {
+  filter: brightness(1.08);
+}
+
+.btn-calc:active {
+  transform: scale(0.98);
+}
+
+/* Card de Resultado Ativo */
+.result-box {
+  margin-top: 1.25rem;
+  background: linear-gradient(145deg, #132724, #0d1e1c);
+  border: 1.5px solid #10b981;
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+  text-align: center;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-box .result-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6ee7b7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.result-box .result-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #34d399;
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0;
+  text-shadow: 0 2px 10px rgba(52, 211, 153, 0.3);
+}
+
+.result-box .result-detail {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+.btn-save {
+  width: 100%;
+  height: 3rem;
+  font-size: 1rem;
+  font-weight: 700;
+  background: #1e293b;
+  border: 1.5px solid #10b981;
+  color: #34d399;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  margin: 0;
+}
+
+.btn-save:hover {
+  background: #10b981;
+  color: #ffffff;
+}
+
+/* Alertas de Erro */
+.alert-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--danger-color);
+  color: #fca5a5;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+/* Seção de Comparação / Histórico */
+.comparison-section {
+  margin-top: 2rem;
+}
+
+.comparison-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.comparison-header h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+  color: #f1f5f9;
+}
+
+.btn-clear {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 0;
+}
+
+.btn-clear:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+/* Lista de Itens Comparados */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item-card {
+  background: var(--surface-card);
+  border: 1px solid #293548;
+  border-radius: 0.85rem;
+  padding: 0.9rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+/* Card Destacado como o Mais Barato */
+.item-card.is-cheapest {
+  background: var(--cheapest-bg);
+  border: 2px solid var(--cheapest-border);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+}
+
+.badge-cheapest {
+  position: absolute;
+  top: -9px;
+  right: 14px;
+  background: #10b981;
+  color: #022c22;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 0.2rem;
+}
+
+.item-specs {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.item-diff {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fb923c;
+  margin-top: 0.2rem;
+}
+
+.item-pricing {
+  text-align: right;
+  margin-right: 0.75rem;
+}
+
+.item-price-kg {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.item-card.is-cheapest .item-price-kg {
+  color: #34d399;
+}
+
+.item-price-unit {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.btn-remove {
+  background: transparent;
+  color: #64748b;
+  border: none;
+  font-size: 1.15rem;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.btn-remove:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Estado Vazio */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px dashed #334155;
+  border-radius: 0.85rem;
+  color: #94a3b8;
+}
+
+.empty-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  margin-top: 2.5rem;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.app-footer a {
+  color: #94a3b8;
+  text-decoration: underline;
+}
+
+/* Responsividade adicional */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 0 0.5rem;
+  }
+  
+  .card-main {
+    padding: 1rem;
+  }
+  
+  .result-box .result-value {
+    font-size: 1.75rem;
+  }
+
+  .item-price-kg {
+    font-size: 1.1rem;
+  }
+}

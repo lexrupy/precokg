@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0b1120">
+  <meta name="description" content="Calculadora rápida de preço por kg para supermercado, com comparador e 100% offline.">
+  <title>Preço por Kg - Calculadora & Comparador</title>
+
+  <!-- PWA & Ícones Locais (100% offline) -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+  <!-- Estilos Vendorizados Locais -->
+  <link rel="stylesheet" href="vendor/pico.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header da Aplicação -->
+    <header class="app-header">
+      <div class="app-container header-top">
+        <a href="#" class="app-brand">
+          <img src="assets/icon.svg" alt="Ícone de Balança" width="36" height="36">
+          <h1>Preço por Kg</h1>
+        </a>
+
+        <div class="header-badges">
+          <span class="badge-offline" title="Funciona completamente sem internet">100% Offline</span>
+          <button v-if="deferredPrompt" @click="installPwa" class="btn-install" type="button">
+            📲 Instalar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="app-container">
+      <!-- Card da Calculadora -->
+      <section class="card-main">
+        <h2 class="card-title">
+          <span>🔍</span> Calcular Valor por Quilo
+        </h2>
+
+        <form @submit.prevent="handleCalculate">
+          <!-- Campo Opcional: Nome do Produto -->
+          <div class="form-group">
+            <label for="prodName">Identificação / Marca (Opcional)</label>
+            <input 
+              id="prodName" 
+              type="text" 
+              class="input-large" 
+              v-model.trim="productName" 
+              placeholder="Ex: Arroz Tio João, Café Melitta"
+              maxlength="50"
+              autocomplete="off"
+            >
+          </div>
+
+          <!-- Campo: Peso em Gramas -->
+          <div class="form-group">
+            <label for="weightGrams">Peso da Embalagem (em Gramas) *</label>
+            <input 
+              id="weightGrams" 
+              type="number" 
+              class="input-large" 
+              v-model="weightGrams" 
+              placeholder="Ex: 500" 
+              inputmode="numeric" 
+              min="1" 
+              step="1"
+              required
+            >
+            <!-- Atalhos de Peso Frequentes -->
+            <div class="presets-container">
+              <span class="preset-chip" @click="setPreset(15)">15g</span>
+              <span class="preset-chip" @click="setPreset(30)">30g</span>
+              <span class="preset-chip" @click="setPreset(60)">60g</span>
+              <span class="preset-chip" @click="setPreset(100)">100g</span>
+              <span class="preset-chip" @click="setPreset(200)">200g</span>
+              <span class="preset-chip" @click="setPreset(250)">250g</span>
+              <span class="preset-chip" @click="setPreset(400)">400g</span>
+              <span class="preset-chip" @click="setPreset(500)">500g</span>
+              <span class="preset-chip" @click="setPreset(1000)">1000g (1kg)</span>
+            </div>
+          </div>
+
+          <!-- Campo: Preço Total Pago -->
+          <div class="form-group">
+            <label for="productPrice">Preço na Prateleira (R$) *</label>
+            <input 
+              id="productPrice" 
+              type="text" 
+              class="input-large" 
+              v-model="productPrice" 
+              placeholder="Ex: 14,90" 
+              inputmode="decimal" 
+              required
+            >
+          </div>
+
+          <!-- Mensagem de Erro -->
+          <div v-if="errorMessage" class="alert-error" role="alert">
+            ⚠️ {{ errorMessage }}
+          </div>
+
+          <!-- Botão Gigante de Calcular -->
+          <button type="submit" class="btn-calc">
+            <span>⚡</span> CALCULAR PREÇO POR KG
+          </button>
+        </form>
+
+        <!-- Card de Resultado Imediato -->
+        <div v-if="currentResult" class="result-box">
+          <div class="result-label">Preço equivalente por 1 Quilograma:</div>
+          <div class="result-value">{{ currentResult.formattedPricePerKg }} <span style="font-size: 1rem; color: #94a3b8;">/ kg</span></div>
+          <div class="result-detail">
+            Item: <strong>{{ currentResult.name }}</strong> ({{ currentResult.grams }}g por {{ currentResult.formattedPrice }})
+          </div>
+          
+          <button type="button" @click="saveCurrentResult" class="btn-save">
+            <span>💾</span> Salvar para Comparar
+          </button>
+        </div>
+      </section>
+
+      <!-- Seção Comparativa / Histórico -->
+      <section class="comparison-section">
+        <div class="comparison-header">
+          <h2>Comparador de Itens ({{ savedItems.length }})</h2>
+          <button 
+            v-if="savedItems.length > 0" 
+            @click="clearAllItems" 
+            class="btn-clear" 
+            type="button"
+          >
+            🗑️ Limpar Todos
+          </button>
+        </div>
+
+        <!-- Lista de Produtos Salvos -->
+        <div v-if="savedItems.length > 0" class="items-list">
+          <div 
+            v-for="item in savedItems" 
+            :key="item.id" 
+            class="item-card" 
+            :class="{ 'is-cheapest': item.id === cheapestId }"
+          >
+            <!-- Badge para o melhor preço -->
+            <span v-if="item.id === cheapestId" class="badge-cheapest">
+              ⭐ Menor Preço
+            </span>
+
+            <div class="item-info">
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-specs">
+                {{ item.grams }}g &bull; Pago: {{ item.formattedPrice }}
+              </div>
+              <!-- Comparação percentual se não for o mais barato -->
+              <div v-if="item.id !== cheapestId && cheapestItem" class="item-diff">
+                +{{ getDiffPercent(item) }}% (+{{ getDiffCurrency(item) }}/kg)
+              </div>
+            </div>
+
+            <div class="item-pricing">
+              <div class="item-price-kg">{{ item.formattedPricePerKg }}</div>
+              <div class="item-price-unit">por quilo</div>
+            </div>
+
+            <button 
+              type="button" 
+              class="btn-remove" 
+              @click="removeItem(item.id)" 
+              title="Remover produto da lista"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Estado Vazio -->
+        <div v-else class="empty-state">
+          <div class="empty-icon">🛒</div>
+          <p>Nenhum produto salvo na comparação.</p>
+          <p style="font-size: 0.8rem; margin-top: 0.25rem;">
+            Calcule acima e clique em <strong>Salvar para Comparar</strong> para descobrir qual tamanho ou marca compensa mais!
+          </p>
+        </div>
+      </section>
+
+      <!-- Rodapé -->
+      <footer class="app-footer">
+        <p>Calculadora de Preço por Kg &bull; PWA SPA 100% Offline</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Scripts: Vue.js Vendorizado + Lógica da Aplicação -->
+  <script src="vendor/vue.global.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

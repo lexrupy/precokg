@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#090d16" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="#334155" stroke-width="4" stroke-opacity="0.4"/>
+
+  <!-- Scale / Balança Icon -->
+  <g filter="url(#shadow)" transform="translate(0, 10)">
+    <!-- Base -->
+    <path d="M196 400 L316 400 L300 370 L212 370 Z" fill="url(#primaryGrad)" />
+    <!-- Pillar -->
+    <rect x="246" y="170" width="20" height="205" rx="10" fill="url(#primaryGrad)" />
+    <!-- Center Pivot -->
+    <circle cx="256" cy="170" r="18" fill="url(#goldGrad)" />
+
+    <!-- Cross Beam -->
+    <rect x="116" y="164" width="280" height="12" rx="6" fill="#f8fafc" />
+
+    <!-- Left Pan (Left Chain & Pan) -->
+    <line x1="140" y1="176" x2="95" y2="260" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="140" y1="176" x2="185" y2="260" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M85 260 Q140 300 195 260 Z" fill="url(#primaryGrad)" />
+    <!-- Weight symbol on left pan -->
+    <text x="140" y="254" font-family="system-ui, sans-serif" font-weight="900" font-size="28" fill="#f8fafc" text-anchor="middle">KG</text>
+
+    <!-- Right Pan (Right Chain & Pan) -->
+    <line x1="372" y1="176" x2="327" y2="260" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="372" y1="176" x2="417" y2="260" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M317 260 Q372 300 427 260 Z" fill="url(#goldGrad)" />
+    <!-- Currency symbol on right pan -->
+    <text x="372" y="254" font-family="system-ui, sans-serif" font-weight="900" font-size="28" fill="#0f172a" text-anchor="middle">R$</text>
+  </g>
+</svg>
