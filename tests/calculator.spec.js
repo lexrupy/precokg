@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculatePricePerKg, findCheapestItemId, formatCurrency } from '../src/calculator.js';
+import { calculatePricePerKg, findCheapestItemId, formatCurrency, groupItemsByProduct } from '../src/calculator.js';
 
 describe('Calculadora de Preço por Kg', () => {
   describe('calculatePricePerKg', () => {
@@ -85,6 +85,49 @@ describe('Calculadora de Preço por Kg', () => {
 
     it('deve retornar fallback seguro caso valor seja inválido', () => {
       expect(formatCurrency(NaN)).toBe('R$ 0,00');
+    });
+  });
+
+  describe('groupItemsByProduct', () => {
+    it('deve retornar array vazio se não houver itens', () => {
+      expect(groupItemsByProduct([])).toEqual([]);
+      expect(groupItemsByProduct(null)).toEqual([]);
+    });
+
+    it('deve agrupar itens pelo mesmo nome de grupo e encontrar o mais barato de cada um', () => {
+      const items = [
+        { id: '1', group: 'Café', name: 'Melitta', pricePerKg: 35.0 },
+        { id: '2', group: 'Café', name: 'Pilão', pricePerKg: 30.0 }, // mais barato do Café
+        { id: '3', group: 'Arroz', name: 'Tio João', pricePerKg: 6.5 },
+        { id: '4', group: 'Arroz', name: 'Camil', pricePerKg: 5.9 }   // mais barato do Arroz
+      ];
+
+      const groups = groupItemsByProduct(items);
+      expect(groups).toHaveLength(2);
+
+      const cafeGroup = groups.find(g => g.groupName === 'Café');
+      expect(cafeGroup).toBeDefined();
+      expect(cafeGroup.items).toHaveLength(2);
+      expect(cafeGroup.cheapestId).toBe('2');
+      expect(cafeGroup.cheapestItem.name).toBe('Pilão');
+
+      const arrozGroup = groups.find(g => g.groupName === 'Arroz');
+      expect(arrozGroup).toBeDefined();
+      expect(arrozGroup.items).toHaveLength(2);
+      expect(arrozGroup.cheapestId).toBe('4');
+      expect(arrozGroup.cheapestItem.name).toBe('Camil');
+    });
+
+    it('deve agrupar itens sem grupo especificado sob "Geral"', () => {
+      const items = [
+        { id: '1', group: '', name: 'Banana', pricePerKg: 8.0 },
+        { id: '2', group: null, name: 'Maçã', pricePerKg: 12.0 }
+      ];
+
+      const groups = groupItemsByProduct(items);
+      expect(groups).toHaveLength(1);
+      expect(groups[0].groupName).toBe('Geral');
+      expect(groups[0].cheapestId).toBe('1');
     });
   });
 });

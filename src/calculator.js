@@ -57,3 +57,48 @@ export function formatCurrency(value) {
     maximumFractionDigits: 2
   });
 }
+
+/**
+ * Agrupa itens por nome de grupo/categoria e identifica o menor preço por kg em cada grupo.
+ * 
+ * @param {Array<{ id: string|number, group?: string, pricePerKg: number, [key: string]: any }>} items
+ * @returns {Array<{ key: string, groupName: string, cheapestId: string|number|null, cheapestItem: any, items: Array<any> }>}
+ */
+export function groupItemsByProduct(items) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return [];
+  }
+
+  const map = new Map();
+
+  for (const item of items) {
+    const rawGroup = (item.group && typeof item.group === 'string') ? item.group.trim() : '';
+    const groupKey = rawGroup.toLowerCase() || 'geral';
+    const displayName = rawGroup || 'Geral';
+
+    if (!map.has(groupKey)) {
+      map.set(groupKey, {
+        key: groupKey,
+        groupName: displayName,
+        items: []
+      });
+    }
+
+    map.get(groupKey).items.push(item);
+  }
+
+  const result = [];
+  for (const groupData of map.values()) {
+    const cheapestId = findCheapestItemId(groupData.items);
+    const cheapestItem = groupData.items.find(i => i.id === cheapestId) || null;
+    result.push({
+      key: groupData.key,
+      groupName: groupData.groupName,
+      cheapestId,
+      cheapestItem,
+      items: groupData.items
+    });
+  }
+
+  return result;
+}

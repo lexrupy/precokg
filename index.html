@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0b1120">
-  <meta name="description" content="Calculadora rápida de preço por kg para supermercado, com comparador e 100% offline.">
+  <meta name="description" content="Calculadora rápida de preço por kg para supermercado, com comparador agrupado por produto e 100% offline.">
   <title>Preço por Kg - Calculadora & Comparador</title>
 
   <!-- PWA & Ícones Locais (100% offline) -->
@@ -22,16 +22,13 @@
     <header class="app-header">
       <div class="app-container header-top">
         <a href="#" class="app-brand">
-          <img src="assets/icon.svg" alt="Ícone de Balança" width="36" height="36">
+          <img src="assets/icon.svg" alt="Ícone de Balança" width="30" height="30">
           <h1>Preço por Kg</h1>
         </a>
 
-        <div class="header-badges">
-          <span class="badge-offline" title="Funciona completamente sem internet">100% Offline</span>
-          <button v-if="deferredPrompt" @click="installPwa" class="btn-install" type="button">
-            📲 Instalar
-          </button>
-        </div>
+        <button v-if="deferredPrompt" @click="installPwa" class="btn-install" type="button">
+          📲 Instalar
+        </button>
       </div>
     </header>
 
@@ -44,15 +41,32 @@
         </h2>
 
         <form @submit.prevent="handleCalculate">
-          <!-- Campo Opcional: Nome do Produto -->
+          <!-- Campo: Grupo / Categoria (Mantido entre cálculos) -->
           <div class="form-group">
-            <label for="prodName">Identificação / Marca (Opcional)</label>
+            <label for="groupName">
+              <span>Grupo / Produto</span>
+              <span class="label-hint">Mantido a cada cálculo</span>
+            </label>
+            <input 
+              id="groupName" 
+              type="text" 
+              class="input-large" 
+              v-model.trim="groupName" 
+              placeholder="Ex: Café, Arroz, Sabão em Pó, Banana..."
+              maxlength="40"
+              autocomplete="off"
+            >
+          </div>
+
+          <!-- Campo Opcional: Nome da Marca / Embalagem -->
+          <div class="form-group">
+            <label for="prodName">Marca / Embalagem (Opcional)</label>
             <input 
               id="prodName" 
               type="text" 
               class="input-large" 
               v-model.trim="productName" 
-              placeholder="Ex: Arroz Tio João, Café Melitta"
+              placeholder="Ex: Melitta, Pilão, Pacote Econômico..."
               maxlength="50"
               autocomplete="off"
             >
@@ -60,7 +74,7 @@
 
           <!-- Campo: Peso em Gramas -->
           <div class="form-group">
-            <label for="weightGrams">Peso da Embalagem (em Gramas) *</label>
+            <label for="weightGrams">Peso (em Gramas) *</label>
             <input 
               id="weightGrams" 
               type="number" 
@@ -105,7 +119,7 @@
             ⚠️ {{ errorMessage }}
           </div>
 
-          <!-- Botão Gigante de Calcular -->
+          <!-- Botão Principal de Calcular -->
           <button type="submit" class="btn-calc">
             <span>⚡</span> CALCULAR PREÇO POR KG
           </button>
@@ -114,78 +128,132 @@
         <!-- Card de Resultado Imediato -->
         <div v-if="currentResult" class="result-box">
           <div class="result-label">Preço equivalente por 1 Quilograma:</div>
-          <div class="result-value">{{ currentResult.formattedPricePerKg }} <span style="font-size: 1rem; color: #94a3b8;">/ kg</span></div>
+          <div class="result-value">{{ currentResult.formattedPricePerKg }} <span style="font-size: 0.95rem; color: #94a3b8;">/ kg</span></div>
           <div class="result-detail">
-            Item: <strong>{{ currentResult.name }}</strong> ({{ currentResult.grams }}g por {{ currentResult.formattedPrice }})
+            Grupo: <strong>{{ currentResult.group }}</strong> &bull; {{ currentResult.name }} ({{ currentResult.grams }}g por {{ currentResult.formattedPrice }})
           </div>
           
           <button type="button" @click="saveCurrentResult" class="btn-save">
-            <span>💾</span> Salvar para Comparar
+            <span>💾</span> Salvar para Comparar em "{{ currentResult.group }}"
           </button>
         </div>
       </section>
 
-      <!-- Seção Comparativa / Histórico -->
+      <!-- Seção Comparativa Agrupada -->
       <section class="comparison-section">
         <div class="comparison-header">
-          <h2>Comparador de Itens ({{ savedItems.length }})</h2>
-          <button 
-            v-if="savedItems.length > 0" 
-            @click="clearAllItems" 
-            class="btn-clear" 
-            type="button"
-          >
-            🗑️ Limpar Todos
-          </button>
+          <h2>Comparações Ativas ({{ savedItems.length }})</h2>
+          
+          <div class="header-actions" v-if="savedItems.length > 0">
+            <button 
+              @click="archiveCurrentSession" 
+              class="btn-action btn-archive" 
+              type="button"
+              title="Salva no histórico e limpa a lista para novas compras"
+            >
+              📦 Arquivar
+            </button>
+            <button 
+              @click="clearAllItems" 
+              class="btn-action btn-clear" 
+              type="button"
+              title="Limpar itens sem arquivar"
+            >
+              🗑️ Limpar
+            </button>
+          </div>
         </div>
 
-        <!-- Lista de Produtos Salvos -->
-        <div v-if="savedItems.length > 0" class="items-list">
-          <div 
-            v-for="item in savedItems" 
-            :key="item.id" 
-            class="item-card" 
-            :class="{ 'is-cheapest': item.id === cheapestId }"
-          >
-            <!-- Badge para o melhor preço -->
-            <span v-if="item.id === cheapestId" class="badge-cheapest">
-              ⭐ Menor Preço
-            </span>
-
-            <div class="item-info">
-              <div class="item-name">{{ item.name }}</div>
-              <div class="item-specs">
-                {{ item.grams }}g &bull; Pago: {{ item.formattedPrice }}
+        <!-- Lista de Grupos de Produtos -->
+        <div v-if="groupedItems.length > 0" class="groups-wrapper">
+          <div v-for="group in groupedItems" :key="group.key" class="group-block">
+            <!-- Cabeçalho do Grupo com Vencedor -->
+            <div class="group-header">
+              <div class="group-title">
+                <span>📁</span> {{ group.groupName }} ({{ group.items.length }})
               </div>
-              <!-- Comparação percentual se não for o mais barato -->
-              <div v-if="item.id !== cheapestId && cheapestItem" class="item-diff">
-                +{{ getDiffPercent(item) }}% (+{{ getDiffCurrency(item) }}/kg)
+              <div v-if="group.cheapestItem && group.items.length > 1" class="group-champ-badge">
+                🏆 Melhor: {{ group.cheapestItem.name }} ({{ group.cheapestItem.formattedPricePerKg }}/kg)
               </div>
             </div>
 
-            <div class="item-pricing">
-              <div class="item-price-kg">{{ item.formattedPricePerKg }}</div>
-              <div class="item-price-unit">por quilo</div>
-            </div>
+            <!-- Itens pertencentes a este Grupo -->
+            <div class="items-list">
+              <div 
+                v-for="item in group.items" 
+                :key="item.id" 
+                class="item-card" 
+                :class="{ 'is-cheapest': item.id === group.cheapestId && group.items.length > 1 }"
+              >
+                <!-- Destaque para o mais vantajoso dentro deste mesmo grupo -->
+                <span v-if="item.id === group.cheapestId && group.items.length > 1" class="badge-cheapest">
+                  ⭐ Melhor Custo
+                </span>
 
-            <button 
-              type="button" 
-              class="btn-remove" 
-              @click="removeItem(item.id)" 
-              title="Remover produto da lista"
-            >
-              ✕
-            </button>
+                <div class="item-info">
+                  <div class="item-name">{{ item.name }}</div>
+                  <div class="item-specs">
+                    {{ item.grams }}g &bull; Pago: {{ item.formattedPrice }}
+                  </div>
+                  <!-- Diferença em relação ao melhor item do mesmo grupo -->
+                  <div v-if="item.id !== group.cheapestId && group.cheapestItem" class="item-diff">
+                    +{{ getDiffPercentInGroup(item, group) }}% (+{{ getDiffCurrencyInGroup(item, group) }}/kg)
+                  </div>
+                </div>
+
+                <div class="item-pricing">
+                  <div class="item-price-kg">{{ item.formattedPricePerKg }}</div>
+                  <div class="item-price-unit">por quilo</div>
+                </div>
+
+                <button 
+                  type="button" 
+                  class="btn-remove" 
+                  @click="removeItem(item.id)" 
+                  title="Remover produto da lista"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Estado Vazio -->
         <div v-else class="empty-state">
           <div class="empty-icon">🛒</div>
-          <p>Nenhum produto salvo na comparação.</p>
-          <p style="font-size: 0.8rem; margin-top: 0.25rem;">
-            Calcule acima e clique em <strong>Salvar para Comparar</strong> para descobrir qual tamanho ou marca compensa mais!
+          <p>Nenhum produto em comparação ativa.</p>
+          <p style="font-size: 0.76rem; margin-top: 0.2rem;">
+            Insira o grupo (ex: Café) e os itens para descobrir o mais vantajoso!
           </p>
+        </div>
+      </section>
+
+      <!-- Histórico de Compras Arquivadas -->
+      <section v-if="archivedSessions.length > 0" class="archive-section">
+        <button type="button" class="archive-toggle-btn" @click="showArchive = !showArchive">
+          <span>📜 Compras Arquivadas ({{ archivedSessions.length }})</span>
+          <span>{{ showArchive ? '▲ Recolher' : '▼ Expandir' }}</span>
+        </button>
+
+        <div v-if="showArchive" class="archive-list">
+          <div v-for="session in archivedSessions" :key="session.id" class="archive-card">
+            <div class="archive-card-header">
+              <span>📅 {{ session.date }} &bull; {{ session.totalItems }} itens</span>
+              <button type="button" class="btn-action btn-clear" @click="deleteArchive(session.id)">
+                Excluir
+              </button>
+            </div>
+            <div class="archive-groups">
+              <div v-for="grp in session.groups" :key="grp.key" class="archive-group-summary">
+                <strong>{{ grp.groupName }}:</strong>
+                <span v-if="grp.cheapestItem">
+                  🏆 {{ grp.cheapestItem.name }} ({{ grp.cheapestItem.formattedPricePerKg }}/kg)
+                </span>
+                <span v-else>1 item</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

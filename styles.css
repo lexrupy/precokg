@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Calculadora de Preço por Kg - Tema Escuro Moderno (Mobile First)
+   Calculadora de Preço por Kg - Tema Escuro Moderno (Compacto & Mobile First)
    Complemento de alta usabilidade sobre o Pico.css v2
    ========================================================================== */
 
@@ -24,40 +24,40 @@ body {
   color: var(--text-main);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
-  padding-bottom: 3rem;
+  padding-bottom: 2rem;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Header & Status */
+/* Header & Status (Compacto) */
 .app-header {
-  padding: 1.25rem 0.5rem 0.75rem;
+  padding: 0.65rem 0.5rem 0.5rem;
   border-bottom: 1px solid #1e293b;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .header-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .app-brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   text-decoration: none;
 }
 
 .app-brand img {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .app-brand h1 {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
   margin: 0;
   letter-spacing: -0.02em;
@@ -66,41 +66,12 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.header-badges {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.badge-offline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: #1e293b;
-  color: #34d399;
-  border: 1px solid #334155;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.badge-offline::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  background-color: #10b981;
-  border-radius: 50%;
-  box-shadow: 0 0 6px #10b981;
-}
-
 .btn-install {
   background: #3b82f6;
   color: #fff;
   border: none;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   border-radius: 9999px;
   cursor: pointer;
@@ -111,89 +82,97 @@ body {
 
 .btn-install:hover {
   background: #2563eb;
-  transform: translateY(-1px);
 }
 
 /* Container do App */
 .app-container {
-  max-width: 680px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 0 0.75rem;
+  padding: 0 0.5rem;
 }
 
-/* Cards */
+/* Cards Principais (Mais compactos) */
 .card-main {
   background: var(--surface-card);
   border: 1px solid #293548;
-  border-radius: 1rem;
-  padding: 1.25rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  margin-bottom: 1.5rem;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  margin-bottom: 1rem;
 }
 
 .card-title {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   color: #e2e8f0;
 }
 
 /* Inputs e Formulários */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .form-group label {
-  display: block;
-  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
   font-weight: 600;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
   color: #cbd5e1;
 }
 
+.label-hint {
+  font-size: 0.7rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
 .input-large {
-  font-size: 1.15rem !important;
+  font-size: 0.95rem !important;
   font-weight: 600 !important;
-  height: 3.25rem !important;
-  padding: 0.5rem 0.85rem !important;
-  border-radius: 0.75rem !important;
+  height: 2.65rem !important;
+  padding: 0.35rem 0.65rem !important;
+  border-radius: 0.5rem !important;
   background: #0f172a !important;
   border: 1px solid #334155 !important;
   color: #f8fafc !important;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .input-large:focus {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 3px var(--primary-glow) !important;
+  box-shadow: 0 0 0 2px var(--primary-glow) !important;
 }
 
 .input-large::placeholder {
   color: #64748b;
   font-weight: 400;
+  font-size: 0.85rem;
 }
 
 /* Presets rápidos para gramas */
 .presets-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.4rem;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
 }
 
 .preset-chip {
   background: #1e293b;
   border: 1px solid #334155;
   color: #94a3b8;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.35rem;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   user-select: none;
@@ -208,21 +187,21 @@ body {
 /* Botões de Ação Grandes */
 .btn-calc {
   width: 100%;
-  height: 3.5rem;
-  font-size: 1.15rem;
+  height: 2.85rem;
+  font-size: 0.95rem;
   font-weight: 800;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #ffffff;
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  box-shadow: 0 4px 14px var(--primary-glow);
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+  box-shadow: 0 3px 10px var(--primary-glow);
   transition: transform 0.1s, filter 0.2s;
 }
 
@@ -236,58 +215,58 @@ body {
 
 /* Card de Resultado Ativo */
 .result-box {
-  margin-top: 1.25rem;
+  margin-top: 0.75rem;
   background: linear-gradient(145deg, #132724, #0d1e1c);
   border: 1.5px solid #10b981;
-  border-radius: 0.85rem;
-  padding: 1.25rem;
+  border-radius: 0.65rem;
+  padding: 0.75rem 0.85rem;
   text-align: center;
-  animation: fadeIn 0.25s ease-in-out;
+  animation: fadeIn 0.2s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .result-box .result-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: #6ee7b7;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.15rem;
 }
 
 .result-box .result-value {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-weight: 900;
   color: #34d399;
   letter-spacing: -0.02em;
-  margin: 0.25rem 0;
-  text-shadow: 0 2px 10px rgba(52, 211, 153, 0.3);
+  margin: 0.15rem 0;
+  text-shadow: 0 2px 8px rgba(52, 211, 153, 0.3);
 }
 
 .result-box .result-detail {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: #94a3b8;
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .btn-save {
   width: 100%;
-  height: 3rem;
-  font-size: 1rem;
+  height: 2.5rem;
+  font-size: 0.9rem;
   font-weight: 700;
   background: #1e293b;
   border: 1.5px solid #10b981;
   color: #34d399;
-  border-radius: 0.65rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   transition: all 0.2s;
   margin: 0;
 }
@@ -302,42 +281,61 @@ body {
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid var(--danger-color);
   color: #fca5a5;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.78rem;
+  margin-top: 0.5rem;
 }
 
-/* Seção de Comparação / Histórico */
+/* Seção de Comparação / Grupos */
 .comparison-section {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .comparison-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.6rem;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 }
 
 .comparison-header h2 {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 800;
   margin: 0;
   color: #f1f5f9;
 }
 
-.btn-clear {
-  background: transparent;
-  color: #94a3b8;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-action {
+  background: #1e293b;
+  color: #cbd5e1;
   border: 1px solid #334155;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 0.35rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   margin: 0;
+}
+
+.btn-archive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #34d399;
+}
+
+.btn-archive:hover {
+  background: #10b981;
+  color: #ffffff;
 }
 
 .btn-clear:hover {
@@ -346,45 +344,80 @@ body {
   border-color: #ef4444;
 }
 
+/* Blocos de Grupo */
+.group-block {
+  background: #131b2e;
+  border: 1px solid #233148;
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 0.4rem;
+}
+
+.group-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.group-champ-badge {
+  font-size: 0.72rem;
+  color: #34d399;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
 /* Lista de Itens Comparados */
 .items-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.45rem;
 }
 
 .item-card {
   background: var(--surface-card);
   border: 1px solid #293548;
-  border-radius: 0.85rem;
-  padding: 0.9rem 1rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  transition: border-color 0.2s, transform 0.15s;
+  transition: border-color 0.2s;
 }
 
-/* Card Destacado como o Mais Barato */
+/* Card Destacado como o Mais Barato do Grupo */
 .item-card.is-cheapest {
   background: var(--cheapest-bg);
-  border: 2px solid var(--cheapest-border);
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+  border: 1.5px solid var(--cheapest-border);
 }
 
 .badge-cheapest {
   position: absolute;
-  top: -9px;
-  right: 14px;
+  top: -7px;
+  right: 10px;
   background: #10b981;
   color: #022c22;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 0.15rem 0.5rem;
+  padding: 0.1rem 0.4rem;
   border-radius: 9999px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .item-info {
@@ -392,31 +425,31 @@ body {
 }
 
 .item-name {
-  font-size: 1rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #f8fafc;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;
 }
 
 .item-specs {
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   color: #94a3b8;
 }
 
 .item-diff {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #fb923c;
-  margin-top: 0.2rem;
+  margin-top: 0.1rem;
 }
 
 .item-pricing {
   text-align: right;
-  margin-right: 0.75rem;
+  margin-right: 0.5rem;
 }
 
 .item-price-kg {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: #f1f5f9;
 }
@@ -426,7 +459,7 @@ body {
 }
 
 .item-price-unit {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   color: #94a3b8;
 }
 
@@ -434,11 +467,11 @@ body {
   background: transparent;
   color: #64748b;
   border: none;
-  font-size: 1.15rem;
-  padding: 0.4rem;
-  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  padding: 0.25rem;
+  border-radius: 0.35rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -450,54 +483,114 @@ body {
   color: #ef4444;
 }
 
+/* Seção de Arquivo Histórico */
+.archive-section {
+  margin-top: 1.25rem;
+  border-top: 1px dashed #334155;
+  padding-top: 0.75rem;
+}
+
+.archive-toggle-btn {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.archive-toggle-btn:hover {
+  background: #27354d;
+}
+
+.archive-list {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.archive-card {
+  background: #0f172a;
+  border: 1px solid #233148;
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.archive-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
+}
+
+.archive-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.archive-group-summary {
+  font-size: 0.75rem;
+  background: #172033;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.35rem;
+  display: flex;
+  justify-content: space-between;
+}
+
 /* Estado Vazio */
 .empty-state {
   text-align: center;
-  padding: 2.5rem 1rem;
-  background: rgba(30, 41, 59, 0.4);
+  padding: 1.5rem 0.75rem;
+  background: rgba(30, 41, 59, 0.3);
   border: 1px dashed #334155;
-  border-radius: 0.85rem;
+  border-radius: 0.65rem;
   color: #94a3b8;
 }
 
 .empty-icon {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
 }
 
 .empty-state p {
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   margin: 0;
 }
 
 /* Footer */
 .app-footer {
   text-align: center;
-  margin-top: 2.5rem;
-  font-size: 0.75rem;
+  margin-top: 1.5rem;
+  font-size: 0.72rem;
   color: #64748b;
-}
-
-.app-footer a {
-  color: #94a3b8;
-  text-decoration: underline;
 }
 
 /* Responsividade adicional */
 @media (max-width: 480px) {
   .app-container {
-    padding: 0 0.5rem;
+    padding: 0 0.4rem;
   }
   
   .card-main {
-    padding: 1rem;
+    padding: 0.75rem 0.85rem;
   }
   
   .result-box .result-value {
-    font-size: 1.75rem;
+    font-size: 1.45rem;
   }
 
   .item-price-kg {
-    font-size: 1.1rem;
+    font-size: 0.98rem;
   }
 }

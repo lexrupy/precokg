@@ -1,30 +1,34 @@
-import { calculatePricePerKg, findCheapestItemId, formatCurrency } from './src/calculator.js';
+import { 
+  calculatePricePerKg, 
+  formatCurrency, 
+  groupItemsByProduct 
+} from './src/calculator.js';
 
-const STORAGE_KEY = 'precokg_saved_items_v1';
+const STORAGE_ITEMS_KEY = 'precokg_saved_items_v2';
+const STORAGE_ARCHIVES_KEY = 'precokg_archived_sessions_v1';
+const STORAGE_GROUP_KEY = 'precokg_last_group_v1';
 
 const { createApp } = window.Vue;
 
 const app = createApp({
   data() {
     return {
+      groupName: '',
       productName: '',
       weightGrams: '',
       productPrice: '',
       currentResult: null,
       savedItems: [],
+      archivedSessions: [],
+      showArchive: false,
       errorMessage: '',
       deferredPrompt: null
     };
   },
 
   computed: {
-    cheapestId() {
-      return findCheapestItemId(this.savedItems);
-    },
-
-    cheapestItem() {
-      if (!this.cheapestId) return null;
-      return this.savedItems.find(item => item.id === this.cheapestId) || null;
+    groupedItems() {
+      return groupItemsByProduct(this.savedItems);
     }
   },
 
@@ -50,9 +54,11 @@ const app = createApp({
           ? parseFloat(this.productPrice.replace(',', '.'))
           : Number(this.productPrice);
 
-        const name = this.productName.trim() || `Produto ${this.savedItems.length + 1}`;
+        const group = this.groupName.trim() || 'Geral';
+        const name = this.productName.trim() || `Item ${this.savedItems.length + 1}`;
 
         this.currentResult = {
+          group,
           name,
           grams: Number(this.weightGrams),
           price: rawPrice,
@@ -70,6 +76,7 @@ const app = createApp({
 
       const newItem = {
         id: 'item_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+        group: this.currentResult.group,
         name: this.currentResult.name,
         grams: this.currentResult.grams,
         price: this.currentResult.price,
@@ -79,12 +86,16 @@ const app = createApp({
         savedAt: new Date().toISOString()
       };
 
-      // Adiciona no início da lista
+      // Adiciona o item à lista
       this.savedItems.unshift(newItem);
       this.persistStorage();
 
-      // Limpa os campos para o próximo item
+      // Salva o último grupo utilizado no localStorage para retenção
+      localStorage.setItem(STORAGE_GROUP_KEY, this.currentResult.group);
+
+      // Limpa os dados do item ESPECÍFICO, mas MANTÉM o groupName ativo!
       this.productName = '';
+      this.weightGrams = '';
       this.productPrice = '';
       this.currentResult = null;
     },
@@ -95,32 +106,73 @@ const app = createApp({
     },
 
     clearAllItems() {
-      if (confirm('Deseja limpar todos os produtos comparados?')) {
+      if (confirm('Deseja limpar todos os itens comparados da lista atual?')) {
         this.savedItems = [];
         this.persistStorage();
       }
     },
 
-    getDiffPercent(item) {
-      if (!this.cheapestItem || !this.cheapestItem.pricePerKg) return 0;
-      const diff = ((item.pricePerKg - this.cheapestItem.pricePerKg) / this.cheapestItem.pricePerKg) * 100;
+    archiveCurrentSession() {
+      if (this.savedItems.length === 0) return;
+
+      const now = new Date();
+      const dateFormatted = now.toLocaleDateString('pt-BR') + ' ' + 
+        now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+      const newArchive = {
+        id: 'arch_' + Date.now(),
+        date: dateFormatted,
+        totalItems: this.savedItems.length,
+        groups: this.groupedItems.map(g => ({
+          key: g.key,
+          groupName: g.groupName,
+          cheapestItem: g.cheapestItem,
+          itemsCount: g.items.length
+        }))
+      };
+
+      this.archivedSessions.unshift(newArchive);
+      this.savedItems = [];
+      this.persistStorage();
+      this.persistArchives();
+    },
+
+    deleteArchive(id) {
+      if (confirm('Excluir este registro arquivado?')) {
+        this.archivedSessions = this.archivedSessions.filter(s => s.id !== id);
+        this.persistArchives();
+      }
+    },
+
+    getDiffPercentInGroup(item, group) {
+      if (!group.cheapestItem || !group.cheapestItem.pricePerKg) return 0;
+      const diff = ((item.pricePerKg - group.cheapestItem.pricePerKg) / group.cheapestItem.pricePerKg) * 100;
       return Math.round(diff);
     },
 
-    getDiffCurrency(item) {
-      if (!this.cheapestItem || !this.cheapestItem.pricePerKg) return 'R$ 0,00';
-      const diff = item.pricePerKg - this.cheapestItem.pricePerKg;
+    getDiffCurrencyInGroup(item, group) {
+      if (!group.cheapestItem || !group.cheapestItem.pricePerKg) return 'R$ 0,00';
+      const diff = item.pricePerKg - group.cheapestItem.pricePerKg;
       return formatCurrency(diff);
     },
 
     loadStorage() {
       try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) {
-            this.savedItems = parsed;
-          }
+        const storedItems = localStorage.getItem(STORAGE_ITEMS_KEY);
+        if (storedItems) {
+          const parsed = JSON.parse(storedItems);
+          if (Array.isArray(parsed)) this.savedItems = parsed;
+        }
+
+        const storedArchives = localStorage.getItem(STORAGE_ARCHIVES_KEY);
+        if (storedArchives) {
+          const parsed = JSON.parse(storedArchives);
+          if (Array.isArray(parsed)) this.archivedSessions = parsed;
+        }
+
+        const lastGroup = localStorage.getItem(STORAGE_GROUP_KEY);
+        if (lastGroup) {
+          this.groupName = lastGroup;
         }
       } catch (e) {
         console.warn('Erro ao carregar dados do localStorage:', e);
@@ -129,22 +181,28 @@ const app = createApp({
 
     persistStorage() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.savedItems));
+        localStorage.setItem(STORAGE_ITEMS_KEY, JSON.stringify(this.savedItems));
       } catch (e) {
         console.warn('Erro ao gravar no localStorage:', e);
       }
     },
 
+    persistArchives() {
+      try {
+        localStorage.setItem(STORAGE_ARCHIVES_KEY, JSON.stringify(this.archivedSessions));
+      } catch (e) {
+        console.warn('Erro ao gravar arquivos no localStorage:', e);
+      }
+    },
+
     setupPwaPrompt() {
       window.addEventListener('beforeinstallprompt', (e) => {
-        // Previne abertura padrão e armazena o evento
         e.preventDefault();
         this.deferredPrompt = e;
       });
 
       window.addEventListener('appinstalled', () => {
         this.deferredPrompt = null;
-        console.log('App instalado com sucesso!');
       });
     },
 
@@ -162,12 +220,7 @@ const app = createApp({
         window.addEventListener('load', () => {
           navigator.serviceWorker
             .register('./sw.js')
-            .then(reg => {
-              console.log('ServiceWorker registrado com sucesso:', reg.scope);
-            })
-            .catch(err => {
-              console.warn('Falha ao registrar ServiceWorker:', err);
-            });
+            .catch(err => console.warn('Falha ao registrar ServiceWorker:', err));
         });
       }
     }
