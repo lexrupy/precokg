@@ -382,6 +382,94 @@ body {
   color: #ffffff;
 }
 
+.btn-history-sm {
+  color: #38bdf8;
+  border-color: #0284c7;
+}
+
+.btn-history-sm:hover {
+  background: rgba(2, 132, 199, 0.2);
+}
+
+.history-badge-sm {
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 0.6rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 9999px;
+  font-weight: 800;
+}
+
+.btn-clear-sm {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.btn-clear-sm:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Modal de Confirmação Compacto */
+.modal-card-sm {
+  max-width: 420px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.prompt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-prompt {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.btn-prompt-save {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.btn-prompt-save:hover {
+  background: #059669;
+}
+
+.btn-prompt-discard {
+  background: transparent;
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
+}
+
+.btn-prompt-discard:hover {
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.btn-prompt-cancel {
+  background: #1e293b;
+  color: #94a3b8;
+  border-color: #334155;
+}
+
+.btn-prompt-cancel:hover {
+  background: #27354d;
+  color: #f8fafc;
+}
+
 /* Blocos de Grupo */
 .group-block {
   background: #131b2e;

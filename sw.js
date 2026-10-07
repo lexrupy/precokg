@@ -1,4 +1,4 @@
-const CACHE_NAME = 'precokg-cache-v7';
+const CACHE_NAME = 'precokg-cache-v8';
 
 const STATIC_ASSETS = [
   './',

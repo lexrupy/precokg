@@ -22,6 +22,7 @@ const app = createApp({
       savedItems: [],
       historySessions: [],
       isHistoryModalOpen: false,
+      isClearPromptOpen: false,
       errorMessage: '',
       deferredPrompt: null
     };
@@ -114,19 +115,32 @@ const app = createApp({
       this.persistStorage();
     },
 
-    clearAndSaveToHistory() {
+    promptClear() {
       if (this.savedItems.length === 0) return;
+      this.isClearPromptOpen = true;
+    },
 
-      // Gera a sessão de histórico estruturada por Data e Grupo
-      const session = createHistorySession(this.savedItems);
-      if (session) {
-        this.historySessions.unshift(session);
-        this.persistHistory();
+    confirmSaveAndClear() {
+      if (this.savedItems.length > 0) {
+        const session = createHistorySession(this.savedItems);
+        if (session) {
+          this.historySessions.unshift(session);
+          this.persistHistory();
+        }
       }
-
-      // Limpa a tela ativa
       this.savedItems = [];
       this.persistStorage();
+      this.isClearPromptOpen = false;
+    },
+
+    confirmDiscardAndClear() {
+      this.savedItems = [];
+      this.persistStorage();
+      this.isClearPromptOpen = false;
+    },
+
+    cancelClearPrompt() {
+      this.isClearPromptOpen = false;
     },
 
     openHistoryModal() {
@@ -239,8 +253,9 @@ const app = createApp({
     this.registerServiceWorker();
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isHistoryModalOpen) {
-        this.closeHistoryModal();
+      if (e.key === 'Escape') {
+        if (this.isClearPromptOpen) this.cancelClearPrompt();
+        if (this.isHistoryModalOpen) this.closeHistoryModal();
       }
     });
   }

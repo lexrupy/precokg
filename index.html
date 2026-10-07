@@ -151,22 +151,25 @@
         <div class="comparison-header">
           <h2>Comparações Ativas ({{ savedItems.length }})</h2>
           
-          <div class="header-actions" v-if="savedItems.length > 0">
-            <button 
-              @click="clearAndSaveToHistory" 
-              class="btn-action btn-save-clear" 
-              type="button"
-              title="Salva os registros atuais no histórico e limpa a tela para a próxima compra"
-            >
-              🧹 Limpar e Salvar
-            </button>
+          <div class="header-actions">
             <button 
               @click="openHistoryModal" 
-              class="btn-action" 
+              class="btn-action btn-history-sm" 
               type="button"
               title="Abrir tabela de histórico"
             >
-              📋 Ver Histórico
+              📋 Histórico
+              <span v-if="historySessions.length" class="history-badge-sm">{{ historySessions.length }}</span>
+            </button>
+
+            <button 
+              v-if="savedItems.length > 0"
+              @click="promptClear" 
+              class="btn-action btn-clear-sm" 
+              type="button"
+              title="Limpar itens da lista"
+            >
+              🧹 Limpar
             </button>
           </div>
         </div>
@@ -241,6 +244,39 @@
         <p>Calculadora de Preço por Kg &bull; PWA SPA 100% Offline</p>
       </footer>
     </main>
+
+    <!-- Modal de Confirmação: Salvar ou Excluir ao Limpar -->
+    <div v-if="isClearPromptOpen" class="modal-overlay" @click.self="cancelClearPrompt">
+      <div class="modal-card modal-card-sm">
+        <div class="modal-header">
+          <h3>🧹 Limpar Comparações</h3>
+          <button type="button" class="btn-close-modal" @click="cancelClearPrompt" aria-label="Fechar">✕</button>
+        </div>
+
+        <div class="modal-body text-center">
+          <p style="font-size: 0.95rem; margin-bottom: 0.35rem; color: #f8fafc;">
+            Você possui <strong>{{ savedItems.length }}</strong> {{ savedItems.length === 1 ? 'item' : 'itens' }} comparados.
+          </p>
+          <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 1.15rem;">
+            O que deseja fazer com estes registros?
+          </p>
+
+          <div class="prompt-actions">
+            <button type="button" class="btn-prompt btn-prompt-save" @click="confirmSaveAndClear">
+              💾 Salvar no Histórico e Limpar
+            </button>
+
+            <button type="button" class="btn-prompt btn-prompt-discard" @click="confirmDiscardAndClear">
+              🗑️ Apenas Excluir (Sem Salvar)
+            </button>
+
+            <button type="button" class="btn-prompt btn-prompt-cancel" @click="cancelClearPrompt">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal Separado de Histórico e Consulta Futura -->
     <div v-if="isHistoryModalOpen" class="modal-overlay" @click.self="closeHistoryModal">
