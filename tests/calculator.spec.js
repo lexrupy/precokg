@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { calculatePricePerKg, findCheapestItemId, formatCurrency, groupItemsByProduct } from '../src/calculator.js';
+import { 
+  calculatePricePerKg, 
+  findCheapestItemId, 
+  formatCurrency, 
+  groupItemsByProduct,
+  createHistorySession
+} from '../src/calculator.js';
 
 describe('Calculadora de Preço por Kg', () => {
   describe('calculatePricePerKg', () => {
@@ -128,6 +134,28 @@ describe('Calculadora de Preço por Kg', () => {
       expect(groups).toHaveLength(1);
       expect(groups[0].groupName).toBe('Geral');
       expect(groups[0].cheapestId).toBe('1');
+    });
+  });
+
+  describe('createHistorySession', () => {
+    it('deve retornar null para lista vazia ou nula', () => {
+      expect(createHistorySession([])).toBeNull();
+      expect(createHistorySession(null)).toBeNull();
+    });
+
+    it('deve gerar uma sessão estruturada com data, hora e grupos', () => {
+      const fixedDate = new Date('2026-10-06T14:30:00Z');
+      const items = [
+        { id: '1', group: 'Café', name: 'Item 1 (250g)', pricePerKg: 32.0 }
+      ];
+
+      const session = createHistorySession(items, fixedDate);
+      expect(session).toBeDefined();
+      expect(session.totalItems).toBe(1);
+      expect(session.groups).toHaveLength(1);
+      expect(session.groups[0].groupName).toBe('Café');
+      expect(session.displayDate).toBeTruthy();
+      expect(session.displayTime).toBeTruthy();
     });
   });
 });

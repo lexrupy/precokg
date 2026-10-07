@@ -1,11 +1,12 @@
 import { 
   calculatePricePerKg, 
   formatCurrency, 
-  groupItemsByProduct 
+  groupItemsByProduct,
+  createHistorySession 
 } from './src/calculator.js';
 
 const STORAGE_ITEMS_KEY = 'precokg_saved_items_v2';
-const STORAGE_ARCHIVES_KEY = 'precokg_archived_sessions_v1';
+const STORAGE_HISTORY_KEY = 'precokg_history_sessions_v2';
 const STORAGE_GROUP_KEY = 'precokg_last_group_v1';
 
 const { createApp } = window.Vue;
@@ -19,8 +20,8 @@ const app = createApp({
       productPrice: '',
       currentResult: null,
       savedItems: [],
-      archivedSessions: [],
-      showArchive: false,
+      historySessions: [],
+      isHistoryModalOpen: false,
       errorMessage: '',
       deferredPrompt: null
     };
@@ -94,14 +95,14 @@ const app = createApp({
         savedAt: new Date().toISOString()
       };
 
-      // Adiciona o item à lista
+      // Adiciona o item à lista ativa
       this.savedItems.unshift(newItem);
       this.persistStorage();
 
       // Salva o último grupo utilizado no localStorage para retenção
       localStorage.setItem(STORAGE_GROUP_KEY, this.currentResult.group);
 
-      // Limpa os dados do item ESPECÍFICO, mas MANTÉM o groupName ativo!
+      // Limpa os dados específicos do item, mas MANTÉM o groupName ativo!
       this.productName = '';
       this.weightGrams = '';
       this.productPrice = '';
@@ -113,42 +114,40 @@ const app = createApp({
       this.persistStorage();
     },
 
-    clearAllItems() {
-      if (confirm('Deseja limpar todos os itens comparados da lista atual?')) {
-        this.savedItems = [];
-        this.persistStorage();
+    clearAndSaveToHistory() {
+      if (this.savedItems.length === 0) return;
+
+      // Gera a sessão de histórico estruturada por Data e Grupo
+      const session = createHistorySession(this.savedItems);
+      if (session) {
+        this.historySessions.unshift(session);
+        this.persistHistory();
+      }
+
+      // Limpa a tela ativa
+      this.savedItems = [];
+      this.persistStorage();
+    },
+
+    openHistoryModal() {
+      this.isHistoryModalOpen = true;
+    },
+
+    closeHistoryModal() {
+      this.isHistoryModalOpen = false;
+    },
+
+    removeHistorySession(id) {
+      if (confirm('Deseja excluir esta consulta do histórico?')) {
+        this.historySessions = this.historySessions.filter(s => s.id !== id);
+        this.persistHistory();
       }
     },
 
-    archiveCurrentSession() {
-      if (this.savedItems.length === 0) return;
-
-      const now = new Date();
-      const dateFormatted = now.toLocaleDateString('pt-BR') + ' ' + 
-        now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-      const newArchive = {
-        id: 'arch_' + Date.now(),
-        date: dateFormatted,
-        totalItems: this.savedItems.length,
-        groups: this.groupedItems.map(g => ({
-          key: g.key,
-          groupName: g.groupName,
-          cheapestItem: g.cheapestItem,
-          itemsCount: g.items.length
-        }))
-      };
-
-      this.archivedSessions.unshift(newArchive);
-      this.savedItems = [];
-      this.persistStorage();
-      this.persistArchives();
-    },
-
-    deleteArchive(id) {
-      if (confirm('Excluir este registro arquivado?')) {
-        this.archivedSessions = this.archivedSessions.filter(s => s.id !== id);
-        this.persistArchives();
+    clearAllHistory() {
+      if (confirm('Tem certeza de que deseja apagar todo o histórico de consultas?')) {
+        this.historySessions = [];
+        this.persistHistory();
       }
     },
 
@@ -172,10 +171,10 @@ const app = createApp({
           if (Array.isArray(parsed)) this.savedItems = parsed;
         }
 
-        const storedArchives = localStorage.getItem(STORAGE_ARCHIVES_KEY);
-        if (storedArchives) {
-          const parsed = JSON.parse(storedArchives);
-          if (Array.isArray(parsed)) this.archivedSessions = parsed;
+        const storedHistory = localStorage.getItem(STORAGE_HISTORY_KEY);
+        if (storedHistory) {
+          const parsed = JSON.parse(storedHistory);
+          if (Array.isArray(parsed)) this.historySessions = parsed;
         }
 
         const lastGroup = localStorage.getItem(STORAGE_GROUP_KEY);
@@ -195,11 +194,11 @@ const app = createApp({
       }
     },
 
-    persistArchives() {
+    persistHistory() {
       try {
-        localStorage.setItem(STORAGE_ARCHIVES_KEY, JSON.stringify(this.archivedSessions));
+        localStorage.setItem(STORAGE_HISTORY_KEY, JSON.stringify(this.historySessions));
       } catch (e) {
-        console.warn('Erro ao gravar arquivos no localStorage:', e);
+        console.warn('Erro ao gravar histórico no localStorage:', e);
       }
     },
 
@@ -238,6 +237,12 @@ const app = createApp({
     this.loadStorage();
     this.setupPwaPrompt();
     this.registerServiceWorker();
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.isHistoryModalOpen) {
+        this.closeHistoryModal();
+      }
+    });
   }
 });
 

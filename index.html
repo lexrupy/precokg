@@ -26,9 +26,16 @@
           <h1>Preço por Kg</h1>
         </a>
 
-        <button v-if="deferredPrompt" @click="installPwa" class="btn-install" type="button">
-          📲 Instalar
-        </button>
+        <div class="header-nav-actions">
+          <button type="button" class="btn-history-nav" @click="openHistoryModal">
+            📋 Histórico
+            <span v-if="historySessions.length" class="history-badge">{{ historySessions.length }}</span>
+          </button>
+          
+          <button v-if="deferredPrompt" @click="installPwa" class="btn-install" type="button">
+            📲 Instalar
+          </button>
+        </div>
       </div>
     </header>
 
@@ -146,20 +153,20 @@
           
           <div class="header-actions" v-if="savedItems.length > 0">
             <button 
-              @click="archiveCurrentSession" 
-              class="btn-action btn-archive" 
+              @click="clearAndSaveToHistory" 
+              class="btn-action btn-save-clear" 
               type="button"
-              title="Salva no histórico e limpa a lista para novas compras"
+              title="Salva os registros atuais no histórico e limpa a tela para a próxima compra"
             >
-              📦 Arquivar
+              🧹 Limpar e Salvar
             </button>
             <button 
-              @click="clearAllItems" 
-              class="btn-action btn-clear" 
+              @click="openHistoryModal" 
+              class="btn-action" 
               type="button"
-              title="Limpar itens sem arquivar"
+              title="Abrir tabela de histórico"
             >
-              🗑️ Limpar
+              📋 Ver Histórico
             </button>
           </div>
         </div>
@@ -224,36 +231,8 @@
           <div class="empty-icon">🛒</div>
           <p>Nenhum produto em comparação ativa.</p>
           <p style="font-size: 0.76rem; margin-top: 0.2rem;">
-            Insira o grupo (ex: Café) e os itens para descobrir o mais vantajoso!
+            Adicione itens acima. Ao clicar em <strong>Limpar e Salvar</strong>, eles serão arquivados na tabela de histórico!
           </p>
-        </div>
-      </section>
-
-      <!-- Histórico de Compras Arquivadas -->
-      <section v-if="archivedSessions.length > 0" class="archive-section">
-        <button type="button" class="archive-toggle-btn" @click="showArchive = !showArchive">
-          <span>📜 Compras Arquivadas ({{ archivedSessions.length }})</span>
-          <span>{{ showArchive ? '▲ Recolher' : '▼ Expandir' }}</span>
-        </button>
-
-        <div v-if="showArchive" class="archive-list">
-          <div v-for="session in archivedSessions" :key="session.id" class="archive-card">
-            <div class="archive-card-header">
-              <span>📅 {{ session.date }} &bull; {{ session.totalItems }} itens</span>
-              <button type="button" class="btn-action btn-clear" @click="deleteArchive(session.id)">
-                Excluir
-              </button>
-            </div>
-            <div class="archive-groups">
-              <div v-for="grp in session.groups" :key="grp.key" class="archive-group-summary">
-                <strong>{{ grp.groupName }}:</strong>
-                <span v-if="grp.cheapestItem">
-                  🏆 {{ grp.cheapestItem.name }} ({{ grp.cheapestItem.formattedPricePerKg }}/kg)
-                </span>
-                <span v-else>1 item</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -262,6 +241,102 @@
         <p>Calculadora de Preço por Kg &bull; PWA SPA 100% Offline</p>
       </footer>
     </main>
+
+    <!-- Modal Separado de Histórico e Consulta Futura -->
+    <div v-if="isHistoryModalOpen" class="modal-overlay" @click.self="closeHistoryModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>📋 Histórico de Consultas</h3>
+          <button type="button" class="btn-close-modal" @click="closeHistoryModal" aria-label="Fechar modal">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div v-if="historySessions.length === 0" class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>Nenhuma consulta arquivada ainda.</p>
+            <p style="font-size: 0.75rem; margin-top: 0.25rem;">
+              Quando você tiver itens ativos e clicar em <strong>Limpar e Salvar</strong>, a tabela com a data e os produtos ficará salva aqui.
+            </p>
+          </div>
+
+          <!-- Sessões Agrupadas por Data e depois por Grupo -->
+          <div v-else class="history-timeline">
+            <div v-for="session in historySessions" :key="session.id" class="history-session-block">
+              <!-- Cabeçalho da Data/Hora -->
+              <div class="session-header">
+                <div class="session-date">
+                  <span>📅 {{ session.displayDate }} às {{ session.displayTime }}</span>
+                  <span class="session-count">({{ session.totalItems }} itens)</span>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-remove-session" 
+                  @click="removeHistorySession(session.id)" 
+                  title="Excluir este registro"
+                >
+                  🗑️
+                </button>
+              </div>
+
+              <!-- Grupos Registrados nesta Data -->
+              <div class="session-groups">
+                <div v-for="group in session.groups" :key="group.key" class="history-group-box">
+                  <div class="history-group-name">
+                    <span>📁 <strong>{{ group.groupName }}</strong></span>
+                    <span v-if="group.cheapestItem && group.items.length > 1" class="history-champ">
+                      🏆 Melhor: {{ group.cheapestItem.name }} ({{ group.cheapestItem.formattedPricePerKg }}/kg)
+                    </span>
+                  </div>
+
+                  <!-- Tabela com Itens do Grupo -->
+                  <div class="table-responsive">
+                    <table class="history-table">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Peso</th>
+                          <th>Pago</th>
+                          <th>Preço/Kg</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr 
+                          v-for="item in group.items" 
+                          :key="item.id"
+                          :class="{ 'tr-cheapest': item.id === group.cheapestId && group.items.length > 1 }"
+                        >
+                          <td>
+                            {{ item.name }}
+                            <span v-if="item.id === group.cheapestId && group.items.length > 1" class="star-badge" title="Melhor custo/benefício">⭐</span>
+                          </td>
+                          <td>{{ item.grams }}g</td>
+                          <td>{{ item.formattedPrice }}</td>
+                          <td class="td-price-kg">{{ item.formattedPricePerKg }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button 
+            v-if="historySessions.length > 0" 
+            type="button" 
+            class="btn-danger-outline" 
+            @click="clearAllHistory"
+          >
+            🗑️ Limpar Todo Histórico
+          </button>
+          <button type="button" class="btn-action" @click="closeHistoryModal">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts: Vue.js Vendorizado + Lógica da Aplicação -->

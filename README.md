@@ -12,7 +12,8 @@ Funciona **100% offline**, pode ser instalado no celular Android/iOS (PWA) e est
 - **Atalhos Rápidos de Peso:** Chips rápidos com pesos comuns (`15g`, `30g`, `60g`, `100g`, `200g`, `250g`, `400g`, `500g`, `1000g`).
 - **Agrupamento Inteligente por Produto:** Defina o grupo (ex: *Café*, *Arroz*, *Sabão*) e o aplicativo mantém o grupo selecionado para as próximas inserções. As comparações são feitas exclusivamente entre produtos do mesmo grupo.
 - **Destaque do Campeão por Grupo:** Identifica e destaca o melhor custo/benefício de cada grupo (**⭐ Melhor Custo**), calculando o percentual de diferença entre as opções.
-- **Botão Arquivar Sessão:** Salve as comparações da sua ida ao mercado no histórico arquivado (`localStorage`) e comece uma nova lista limpa quando desejar.
+- **Limpar & Salvar Automático:** Ao clicar em **🧹 Limpar e Salvar**, a lista ativa é esvaziada para a próxima compra e os registros são arquivados permanentemente.
+- **Modal de Histórico Estruturado:** Consulte comparações anteriores organizadas por Data/Hora e depois por Grupo/Tabela de Itens (com botão no topo e atalho ESC).
 - **Tema Escuro Compacto & Moderno:** Interface de alta densidade e excelente usabilidade touch, ideal para visualização rápida no celular.
 - **100% Offline & PWA:** Todas as bibliotecas (Vue.js e Pico.css) e ícones estão vendorizados localmente. Não realiza nenhuma requisição para CDNs externas após instalado.
 - **Instalável no Smartphone:** Suporte a Web App Manifest e Service Worker com estratégia *Cache-First*.

@@ -102,3 +102,28 @@ export function groupItemsByProduct(items) {
 
   return result;
 }
+
+/**
+ * Cria uma sessão estruturada de histórico com carimbo de data/hora e itens agrupados.
+ * 
+ * @param {Array<any>} items
+ * @param {Date} [nowDate]
+ * @returns {object|null}
+ */
+export function createHistorySession(items, nowDate = new Date()) {
+  if (!Array.isArray(items) || items.length === 0) {
+    return null;
+  }
+
+  const dateStr = nowDate.toLocaleDateString('pt-BR');
+  const timeStr = nowDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  return {
+    id: 'hist_' + nowDate.getTime() + '_' + Math.random().toString(36).substring(2, 6),
+    createdAt: nowDate.toISOString(),
+    displayDate: dateStr,
+    displayTime: timeStr,
+    totalItems: items.length,
+    groups: groupItemsByProduct(items)
+  };
+}
